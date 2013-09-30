@@ -31,7 +31,7 @@ h2 { margin: 1em 0px; }
 .ambrose-view-chord {}
 
 /* Graph view */
-.ambrose-view-graph path.edge { fill: none; stroke: #aaa; stroke-width: 1.2px; }
+.ambrose-view-graph path.edge { fill: none; stroke: /*#aaa; stroke-width: 1.2px;*/ }
 .ambrose-view-graph path.progress {}
 .ambrose-view-graph path.map { fill: #0e90d2; }
 .ambrose-view-graph path.reduce { fill: #FF7800; }
@@ -40,3 +40,16 @@ h2 { margin: 1em 0px; }
 
 /* Dashboard */
 .dashboard-status { margin: 1em 0; }
+
+/* Info Box */
+.detailpop {
+    position: absolute;
+    width: 225px;
+    padding: 10px;
+    background-color: rgba(198, 233, 255, 0.9);
+    border: 0px;
+    display: none;
+    opacity: 0;
+}
+
+.detailpop.shown{ opacity: 0.9; display: block; }

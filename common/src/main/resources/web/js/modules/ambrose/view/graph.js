@@ -17,8 +17,8 @@ limitations under the License.
 /**
  * This module defines the Graph view which generates horizontal DAG view of Workflow jobs.
  */
-define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core'], function(
-  $, _, d3, Ambrose, View
+define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popover'], function(
+  $, _, d3, Ambrose, View, Popover
 ) {
 
   // utility functions
@@ -227,6 +227,7 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core'], function
 
     handleMouseInteraction: function(jobs) {
       var nodes = jobs.map(function(j) { return j.node; });
+
       this.updateNodeGroupsFill(this.selectNodeGroups(nodes));
     },
 
@@ -256,12 +257,15 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core'], function
       g.each(function(node, i) {
         d3.select(this).selectAll('path.edge').data(node.edges).enter()
           .append('svg:path').attr('class', 'edge')
+          .attr("stroke-width", "2px")
+          .attr("stroke", "CornflowerBlue")
           .attr('d', function(edge, i) {
             var p0 = edge.source,
             p3 = edge.target,
             m = (p0.x + p3.x) / 2,
             p = [p0, {x: m, y: p0.y}, {x: m, y: p3.y}, p3],
             p = p.map(projection);
+
             return "M" + p[0] + "C" + p[1] + " " + p[2] + " " + p[3];
           });
       });
@@ -289,11 +293,20 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core'], function
       // create smaller circle and bind event handlers
       real.append('svg:circle')
         .attr('class', 'anchor')
+        .attr('id', function(node) {
+          return 'node-' + node.id;
+         })
         .attr('cx', cx)
         .attr('cy', cy)
         .attr('r', self.params.dimensions.node.radius)
-        .on('mouseover', function(node) { self.workflow.mouseOverJob(node.data); })
-        .on('mouseout', function(node) { self.workflow.mouseOverJob(null); })
+        .on('mouseover', function(node) {
+          self.workflow.mouseOverJob(node.data);
+          self.showPopover(node.data, this);
+        })
+        .on('mouseout', function(node) {
+          self.workflow.mouseOverJob(null);
+          self.hidePopover(node.data, this);
+        })
         .on('click', function(node) { self.workflow.selectJob(node.data); });
     },
 
@@ -321,6 +334,17 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core'], function
       // update map, reduce progress arcs
       t.selectAll('g.node path.map').attrTween("d", getArcTween(progress.map, self.arc.progress.map));
       t.selectAll('g.node path.reduce').attrTween("d", getArcTween(progress.reduce, self.arc.progress.reduce));
+
+      g.each(function(node, i) {
+        d3.select(this).selectAll('path.edge').data(node.edges)
+          .attr("stroke-width", function(d, i) {
+            if (d.source.data && d.source.data.metrics) {
+              alert(d.source.data.metrics);
+              return "4px";
+            }
+            return "2px";
+          })
+      });
 
       // update magnitude radius
       t.selectAll('g.node circle.magnitude')
@@ -375,10 +399,32 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core'], function
         var status = job.status || '';
         if (job.mouseover) return colors.mouseover;
         if (job.selected) return colors.selected;
+
         return colors[status.toLowerCase()] || colors.pending;
       }
 
       g.selectAll('g.node circle.anchor').attr('fill', fill);
+    },
+
+    showPopover: function(data, target) {
+      if (!this.popover) {
+        var container = $('<div id="graph-popover">');
+        $('body').append(container);
+        this.popover = new Popover(target, container, data);
+      }
+      this.popover.setNode(data, target);
+      this.popover.show();
+    },
+
+    hidePopover: function(data, target) {
+      if (!this.popover) {
+        var container = $('<div id="graph-popover">');
+        $('body').append(container);
+        this.popover = new Popover(target, container, data);
+      }
+      this.popover.setTarget(target);
+      var newEl = $(d3.event.toElement || d3.event.relatedTarget);
+      this.popover.hide(newEl);
     },
   };
 

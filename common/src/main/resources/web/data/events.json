@@ -370,7 +370,7 @@
       },
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
-        "avgMapTime" : -1,
+        "avgMapTime" : 1234,
         "hdfsBytesWritten" : 0,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
@@ -723,7 +723,7 @@
       },
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
-        "avgMapTime" : -1,
+        "avgMapTime" : 1234,
         "hdfsBytesWritten" : 0,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
@@ -1097,7 +1097,7 @@
       },
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
-        "avgMapTime" : -1,
+        "avgMapTime" : 1234,
         "hdfsBytesWritten" : 0,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
@@ -1154,7 +1154,7 @@
       "configuration" : { },
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
-        "avgMapTime" : -1,
+        "avgMapTime" : 1234,
         "hdfsBytesWritten" : 0,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
