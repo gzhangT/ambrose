@@ -49,7 +49,34 @@
       "id" : "job_local_0001",
       "aliases" : [ "1-452", "enemy", "user_enemies" ],
       "features" : [ "GROUP_BY" ],
-      "counterGroupMap" : { },
+      "counterGroupMap" : {
+      "FileSystemCounters" : {
+          "groupName" : "FileSystemCounters",
+          "groupDisplayName" : "FileSystemCounters",
+          "counterInfoMap" : {
+            "FILE_BYTES_READ" : {
+              "name" : "FILE_BYTES_READ",
+              "displayName" : "FILE_BYTES_READ",
+              "value" : 29218496677
+            },
+            "HDFS_BYTES_READ" : {
+              "name" : "HDFS_BYTES_READ",
+              "displayName" : "HDFS_BYTES_READ",
+              "value" : 14182322511
+            },
+            "FILE_BYTES_WRITTEN" : {
+              "name" : "FILE_BYTES_WRITTEN",
+              "displayName" : "FILE_BYTES_WRITTEN",
+              "value" : 43404664062
+            },
+            "HDFS_BYTES_WRITTEN" : {
+              "name" : "HDFS_BYTES_WRITTEN",
+              "displayName" : "HDFS_BYTES_WRITTEN",
+              "value" : 9475727200
+            }
+          }
+        }
+      },
       "configuration" : {
         "hadoop.id.str" : "hazen",
         "job.end.retry.interval" : "30000",
@@ -370,23 +397,23 @@
       },
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
-        "avgMapTime" : 1234,
-        "hdfsBytesWritten" : 0,
-        "maxReduceTime" : -1,
-        "minReduceTime" : -1,
+        "avgMapTime" : 683413,
+        "hdfsBytesWritten" : 9475727200,
+        "maxReduceTime" : 494495,
+        "minReduceTime" : 367065,
         "SMMSpillCount" : 0,
         "proactiveSpillCountRecs" : 0,
-        "numberReduces" : 1,
-        "avgReduceTime" : -1,
-        "mapInputRecords" : 0,
-        "numberMaps" : 1,
+        "numberReduces" : 17,
+        "avgReduceTime" : 422993,
+        "mapInputRecords" : 207574850,
+        "numberMaps" : 16,
         "bytesWritten" : 0,
-        "maxMapTime" : -1,
+        "maxMapTime" : 1062598,
         "recordWritten" : 0,
-        "mapOutputRecords" : 0,
-        "reduceOutputRecords" : 0,
-        "reduceInputRecords" : 0,
-        "minMapTime" : -1
+        "mapOutputRecords" : 207574850,
+        "reduceOutputRecords" : 29351213,
+        "reduceInputRecords" : 207574850,
+        "minMapTime" : 343139
       }
     },
     "successorNames" : [ "scope-391" ]
@@ -724,7 +751,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : 1234,
-        "hdfsBytesWritten" : 0,
+        "hdfsBytesWritten" : 506821001,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
         "SMMSpillCount" : 0,

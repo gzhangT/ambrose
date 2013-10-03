@@ -44,7 +44,7 @@ h2 { margin: 1em 0px; }
 /* Info Box */
 .detailpop {
     position: absolute;
-    width: 225px;
+    /*width: 250px;*/
     padding: 10px;
     background-color: rgba(198, 233, 255, 0.9);
     border: 0px;

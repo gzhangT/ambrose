@@ -99,6 +99,13 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
       }, View.Theme, params);
       self.resetView();
 
+      alert("zzz");
+      $('body').on('click', function(event) {
+        if (!$(event.target).closest('#graph-popover').length) {
+          self.clickToHidePopover();
+        };
+      });
+
       // shortcut to dimensions
       var dim = self.params.dimensions;
 
@@ -222,17 +229,37 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
 
     handleJobsUpdated: function(jobs) {
       var nodes = jobs.map(function(j) { return j.node; });
+
+      var clone = nodes.slice(0);
+
+      while (clone.length > 0) {
+        var newClone = new Array();
+        $.each(clone, function(i, node) {
+          $.each(node.parents, function(j, parent) {
+            if (parent.pseudo) {
+              newClone.push(parent);
+              nodes.push(parent);
+            }
+          });
+        });
+        clone = newClone;
+      }
+
       this.updateNodeGroups(this.selectNodeGroups(nodes));
+      this.updateNodeGroups(this.selectPseudoNodeGroups(nodes));
     },
 
     handleMouseInteraction: function(jobs) {
       var nodes = jobs.map(function(j) { return j.node; });
-
       this.updateNodeGroupsFill(this.selectNodeGroups(nodes));
     },
 
     selectNodeGroups: function(nodes) {
       return this.svg.selectAll('g.node').data(nodes, function(node) { return node.id; });
+    },
+
+    selectPseudoNodeGroups: function(nodes) {
+      return this.svg.selectAll('g.pseudo').data(nodes, function(node) { return node.id; });
     },
 
     removeNodeGroups: function(g) {
@@ -253,12 +280,14 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
           return node.pseudo ? 'pseudo' : 'node';
         });
 
+      //alert("hi");
+
       // create out-bound edges from each node
       g.each(function(node, i) {
         d3.select(this).selectAll('path.edge').data(node.edges).enter()
           .append('svg:path').attr('class', 'edge')
-          .attr("stroke-width", "2px")
-          .attr("stroke", "CornflowerBlue")
+          .attr("stroke-width", "1px")
+          .attr("stroke", "#aaa")
           .attr('d', function(edge, i) {
             var p0 = edge.source,
             p3 = edge.target,
@@ -301,7 +330,7 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
         .attr('r', self.params.dimensions.node.radius)
         .on('mouseover', function(node) {
           self.workflow.mouseOverJob(node.data);
-          self.showPopover(node.data, this);
+          self.showPopover(node.data, this, 'metrics');
         })
         .on('mouseout', function(node) {
           self.workflow.mouseOverJob(null);
@@ -334,17 +363,6 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
       // update map, reduce progress arcs
       t.selectAll('g.node path.map').attrTween("d", getArcTween(progress.map, self.arc.progress.map));
       t.selectAll('g.node path.reduce').attrTween("d", getArcTween(progress.reduce, self.arc.progress.reduce));
-
-      g.each(function(node, i) {
-        d3.select(this).selectAll('path.edge').data(node.edges)
-          .attr("stroke-width", function(d, i) {
-            if (d.source.data && d.source.data.metrics) {
-              alert(d.source.data.metrics);
-              return "4px";
-            }
-            return "2px";
-          })
-      });
 
       // update magnitude radius
       t.selectAll('g.node circle.magnitude')
@@ -388,6 +406,20 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
           }
           return radius;
         });
+
+      g.each(function(node, i) {
+          d3.select(this).selectAll('path.edge').data(node.edges)
+            .attr("stroke-width", function(d, i) {
+              if (d.target.data && d.target.data.metrics && d.target.data.metrics.hdfsBytesWritten) {
+                var w = Math.log(d.target.data.metrics.hdfsBytesWritten) / Math.log(50);
+                return w + "px";
+              }
+              return "1px";
+            })
+            .on('mouseover', function(node) {
+              self.showPopover(node.target.data, this, 'counters');
+            })
+        });
     },
 
     updateNodeGroupsFill: function(g) {
@@ -406,26 +438,31 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
       g.selectAll('g.node circle.anchor').attr('fill', fill);
     },
 
-    showPopover: function(data, target) {
+    showPopover: function(data, target, type) {
       if (!this.popover) {
         var container = $('<div id="graph-popover">');
         $('body').append(container);
         this.popover = new Popover(target, container, data);
       }
-      this.popover.setNode(data, target);
+      this.popover.setNode(data, target, type);
       this.popover.show();
     },
 
     hidePopover: function(data, target) {
       if (!this.popover) {
-        var container = $('<div id="graph-popover">');
-        $('body').append(container);
-        this.popover = new Popover(target, container, data);
+        return ;
       }
       this.popover.setTarget(target);
       var newEl = $(d3.event.toElement || d3.event.relatedTarget);
-      this.popover.hide(newEl);
+      this.popover.mouseOutHide(newEl);
     },
+
+    clickToHidePopover: function() {
+        if (!this.popover) {
+          return ;
+        }
+        this.popover.hideIfExist();
+      },
   };
 
   // bind prototype to ctor

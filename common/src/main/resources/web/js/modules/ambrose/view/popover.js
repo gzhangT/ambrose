@@ -45,50 +45,77 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
           self.target = target;
       },
 
-      setNode: function(data, target) {
+      setNode: function(data, target, type) {
         self.nodedata = data;
         this.setTarget(target);
-        this.updateForNode();
+        this.updateForNode(type);
       },
 
-      updateForNode: function() {
+      updateForNode: function(type) {
         var metricsEl = $('<div">');
 
-        var headerEl = $('<div class="metric">');
-        headerEl.append($('<p class="metric"><b> Metrics </b> </p>'));
-        metricsEl.append(headerEl);
+        var xcor = d3.event.pageX;
+        var ycor = d3.event.pageY;
 
-        if (self.nodedata.metrics) {
-          _.each(self.nodedata.metrics, function(value, key) {
-            var metricEl = $('<div class="metric">');
-            metricEl.append($('<span class="label">' + key + ':' + '</span>'));
-            metricEl.append($('<span class="data">' + ' ' + value + '</span>'));
-            metricsEl.append(metricEl);
-          });
-        } else {
+        if (type == 'metrics') {
+          this.container.css("width", "230px");
+          var headerEl = $('<div class="metric">');
+          headerEl.append($('<p class="metric"><b> Metrics </b> </p>'));
+          metricsEl.append(headerEl);
+
+          if (self.nodedata.metrics) {
+            _.each(self.nodedata.metrics, function(value, key) {
+              var metricEl = $('<div class="metric">');
+              metricEl.append($('<span class="label">' + key + ':' + '</span>'));
+              metricEl.append($('<span class="data">' + ' ' + value + '</span>'));
+              metricsEl.append(metricEl);
+            });
+          } else {
+              var noDataParaEl = $('<div class="metric">');
+              noDataParaEl.append($('<p class="metric">Metrics data not available yet. </p>'));
+              metricsEl.append(noDataParaEl);
+          }
+        } else if (type == 'counters') {
+           this.container.css("width", "275px");
+           var headerEl = $('<div class="metric">');
+           headerEl.append($('<p class="metric"><b> File System Counters </b> </p>'));
+           metricsEl.append(headerEl);
+
+          if (self.nodedata.counterGroupMap && self.nodedata.counterGroupMap.FileSystemCounters
+              && self.nodedata.counterGroupMap.FileSystemCounters.counterInfoMap
+              && Object.keys(self.nodedata.counterGroupMap.FileSystemCounters.counterInfoMap).length > 0) {
+              var map = self.nodedata.counterGroupMap.FileSystemCounters.counterInfoMap;
+              for (var key in map) {
+                var metricEl = $('<div class="metric">');
+                metricEl.append($('<span class="label">' + map[key].name + ':' + '</span>'));
+                metricEl.append($('<span class="data">' + ' ' + map[key].value + '</span>'));
+                metricsEl.append(metricEl);
+              }
+          } else {
             var noDataParaEl = $('<div class="metric">');
-            noDataParaEl.append($('<p class="metric">Metrics data not available yet. </p>'));
+            noDataParaEl.append($('<p class="metric"> Counter Information is not available. </p>'));
             metricsEl.append(noDataParaEl);
+          }
         }
 
         this.container.empty();
         this.container.append(metricsEl);
-        this.updatePosition();
+        this.updatePosition(xcor, ycor);
       },
 
-      updatePosition: function() {
+      updatePosition: function(xcor, ycor) {
         var targetEl = self.target;
 
         var screenHeight = $(window).height();
         var screenWidth = $(window).width();
 
-        var position = this.getPosition(targetEl, screenWidth);
+        var position = this.getPosition(targetEl, screenWidth, xcor, ycor);
 
         this.container.addClass('top');
         this.container.css({top: position.top, left: position.left});
       },
 
-      getPosition: function(targetEl, winwidth) {
+      getPosition: function(targetEl, winwidth, xcor, ycor) {
         var el = $(targetEl), targetOffset = el.offset(), left, top;
 
         var bbox = el[0].getBoundingClientRect(),
@@ -106,7 +133,7 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
 
         top = Math.max(targetOffset.top + height, 0);
 
-        return {top: top, left: left};
+        return {top: ycor, left: xcor};
       },
 
       show: function() {
@@ -140,7 +167,7 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
         }, 300);
       },
 
-      hide: function(newEl) {
+      mouseOutHide: function(newEl) {
         if (newEl) {
           el = $(self.target), newEl = $(newEl);
           if ($.contains(el, newEl) ||  // if newEl is a child element, it's not really out
@@ -154,6 +181,11 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
           this.hideItem();
         }
       },
+
+      hideIfExist: function() {
+        this.container.toggleClass('shown', false);
+      }
+
     };
 
     Popover.fn.init.prototype = Popover.fn;
