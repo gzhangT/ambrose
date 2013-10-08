@@ -398,7 +398,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : 683413,
-        "hdfsBytesWritten" : 9475727200,
+        "hdfsBytesWritten" : 1475727200,
         "maxReduceTime" : 494495,
         "minReduceTime" : 367065,
         "SMMSpillCount" : 0,
@@ -751,7 +751,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : 1234,
-        "hdfsBytesWritten" : 506821001,
+        "hdfsBytesWritten" : 817385081,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
         "SMMSpillCount" : 0,
@@ -1125,7 +1125,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : 1234,
-        "hdfsBytesWritten" : 0,
+        "hdfsBytesWritten" : 506821001,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
         "SMMSpillCount" : 0,
@@ -1182,7 +1182,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : 1234,
-        "hdfsBytesWritten" : 0,
+        "hdfsBytesWritten" : 356390157,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
         "SMMSpillCount" : 0,
@@ -1584,7 +1584,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : -1,
-        "hdfsBytesWritten" : 0,
+        "hdfsBytesWritten" : 629590618,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
         "SMMSpillCount" : 0,
@@ -1620,7 +1620,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : -1,
-        "hdfsBytesWritten" : 0,
+        "hdfsBytesWritten" : 901418760,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
         "SMMSpillCount" : 0,
@@ -1656,7 +1656,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : -1,
-        "hdfsBytesWritten" : 0,
+        "hdfsBytesWritten" : 1182136415,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
         "SMMSpillCount" : 0,
@@ -1727,7 +1727,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : -1,
-        "hdfsBytesWritten" : 0,
+        "hdfsBytesWritten" : 630643236,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
         "SMMSpillCount" : 0,
@@ -1770,7 +1770,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : -1,
-        "hdfsBytesWritten" : 0,
+        "hdfsBytesWritten" : 795501114,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
         "SMMSpillCount" : 0,
@@ -1820,7 +1820,7 @@
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : -1,
-        "hdfsBytesWritten" : 0,
+        "hdfsBytesWritten" : 900232560,
         "maxReduceTime" : -1,
         "minReduceTime" : -1,
         "SMMSpillCount" : 0,

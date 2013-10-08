@@ -76,6 +76,9 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
      */
     init: function(workflow, container, params) {
       var self = this;
+      self.dataMax = 0;
+      self.dataMin = 0;
+
       self.workflow = workflow;
       self.container = container = $(container);
       self.params = $.extend(true, {
@@ -99,7 +102,7 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
       }, View.Theme, params);
       self.resetView();
 
-      alert("zzz");
+      //alert("zzz");
       $('body').on('click', function(event) {
         if (!$(event.target).closest('#graph-popover').length) {
           self.clickToHidePopover();
@@ -166,6 +169,9 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
     },
 
     handleJobsLoaded: function() {
+      this.dataMax = 0;
+      this.dataMin = 0;
+
       // compute node x,y coords
       var graph = this.workflow.graph;
       var groups = graph.topologicalGroups;
@@ -279,8 +285,6 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
         .attr('class', function(node) {
           return node.pseudo ? 'pseudo' : 'node';
         });
-
-      //alert("hi");
 
       // create out-bound edges from each node
       g.each(function(node, i) {
@@ -408,13 +412,39 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
         });
 
       g.each(function(node, i) {
+        if (node.data.metrics && node.data.metrics.hdfsBytesWritten) {
+          var written = node.data.metrics.hdfsBytesWritten;
+          if(written != 0) {
+            if (self.dataMax < written) {
+              self.dataMax = written;
+            }
+
+            if (self.dataMin > written || self.dataMin == 0) {
+              self.dataMin = written;
+            }
+          }
+        }
+      });
+
+      var maxWidth = 7;
+      var minWidth = 2;
+
+      g.each(function(node, i) {
           d3.select(this).selectAll('path.edge').data(node.edges)
             .attr("stroke-width", function(d, i) {
               if (d.target.data && d.target.data.metrics && d.target.data.metrics.hdfsBytesWritten) {
-                var w = Math.log(d.target.data.metrics.hdfsBytesWritten) / Math.log(50);
-                return w + "px";
+                //var w = Math.log(d.target.data.metrics.hdfsBytesWritten) / Math.log(50);
+                var w = d.target.data.metrics.hdfsBytesWritten;
+                return (minWidth + (maxWidth - minWidth) / (self.dataMax - self.dataMin)
+                    * (w - self.dataMin)) + "px";
               }
               return "1px";
+            })
+            .attr("stroke", function(d, i) {
+              if (d.target.data && d.target.data.metrics && d.target.data.metrics.hdfsBytesWritten) {
+                return "#888";
+              }
+              return "#aaa";
             })
             .on('mouseover', function(node) {
               self.showPopover(node.target.data, this, 'counters');

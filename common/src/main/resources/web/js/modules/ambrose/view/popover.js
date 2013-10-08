@@ -41,18 +41,28 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
         this.container.addClass('detailpop');
       },
 
-      setTarget: function(target) {
-          self.target = target;
-      },
-
       setNode: function(data, target, type) {
         self.nodedata = data;
         this.setTarget(target);
         this.updateForNode(type);
       },
 
+      setTarget: function(target) {
+          self.target = target;
+      },
+
+      // Separate big number with commas.
+      commify : function(number) {
+        if(isNaN(number)) {
+          return number;
+        }
+        var num = Number(number);
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      },
+
       updateForNode: function(type) {
         var metricsEl = $('<div">');
+        var obj = this;
 
         var xcor = d3.event.pageX;
         var ycor = d3.event.pageY;
@@ -67,7 +77,7 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
             _.each(self.nodedata.metrics, function(value, key) {
               var metricEl = $('<div class="metric">');
               metricEl.append($('<span class="label">' + key + ':' + '</span>'));
-              metricEl.append($('<span class="data">' + ' ' + value + '</span>'));
+              metricEl.append($('<span class="data">' + ' ' + obj.commify(value) + '</span>'));
               metricsEl.append(metricEl);
             });
           } else {
@@ -88,7 +98,8 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
               for (var key in map) {
                 var metricEl = $('<div class="metric">');
                 metricEl.append($('<span class="label">' + map[key].name + ':' + '</span>'));
-                metricEl.append($('<span class="data">' + ' ' + map[key].value + '</span>'));
+                metricEl.append($('<span class="data">' + ' ' + obj.commify(map[key].value)
+                    + '</span>'));
                 metricsEl.append(metricEl);
               }
           } else {
@@ -99,8 +110,9 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
         }
 
         this.container.empty();
-        this.container.append(metricsEl);
         this.updatePosition(xcor, ycor);
+        this.addCloseButton(this, this.container.width());
+        this.container.append(metricsEl);
       },
 
       updatePosition: function(xcor, ycor) {
@@ -113,6 +125,16 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
 
         this.container.addClass('top');
         this.container.css({top: position.top, left: position.left});
+      },
+
+      addCloseButton: function(self, width) {
+        var closeEl = $('<div class="closeButton" id="popOverCloseButton">X</div>');
+        closeEl.css("margin-left", (width - 25) + "px");
+        this.container.append(closeEl);
+
+        document.getElementById('popOverCloseButton').onclick = function() {
+          self.hideIfExist();
+        }
       },
 
       getPosition: function(targetEl, winwidth, xcor, ycor) {
@@ -138,11 +160,6 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
 
       show: function() {
         this.container.toggleClass('shown', true);
-      },
-
-      cancelHide: function() {
-        clearTimeout(this.hideTimeout);
-        clearTimeout(this.fadeTimeout);
       },
 
       cancelHide: function() {

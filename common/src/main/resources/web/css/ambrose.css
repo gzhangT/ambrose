@@ -43,13 +43,20 @@ h2 { margin: 1em 0px; }
 
 /* Info Box */
 .detailpop {
-    position: absolute;
-    /*width: 250px;*/
-    padding: 10px;
-    background-color: rgba(198, 233, 255, 0.9);
-    border: 0px;
-    display: none;
-    opacity: 0;
+  position: absolute;
+  /*width: 250px;*/
+  padding: 10px;
+  background-color: rgba(198, 233, 255, 0.9);
+  border: 0px;
+  display: none;
+  opacity: 0;
 }
 
 .detailpop.shown{ opacity: 0.9; display: block; }
+
+.closeButton{
+  color: #F0F8FF;
+  width: 15px;
+  background-color: #B0C4DE;
+  padding-left: 6px;
+}
