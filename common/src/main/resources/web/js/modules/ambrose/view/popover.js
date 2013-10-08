@@ -202,7 +202,6 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
       hideIfExist: function() {
         this.container.toggleClass('shown', false);
       }
-
     };
 
     Popover.fn.init.prototype = Popover.fn;
