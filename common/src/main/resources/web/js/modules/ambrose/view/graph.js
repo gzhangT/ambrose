@@ -432,8 +432,9 @@ define(['lib/jquery', 'lib/underscore', 'lib/d3', '../core', './core', './popove
       g.each(function(node, i) {
           d3.select(this).selectAll('path.edge').data(node.edges)
             .attr("stroke-width", function(d, i) {
-              if (d.target.data && d.target.data.metrics && d.target.data.metrics.hdfsBytesWritten) {
-                //var w = Math.log(d.target.data.metrics.hdfsBytesWritten) / Math.log(50);
+              if (self.dataMax == self.dataMin && self.dataMin != 0) {
+                return minWidth + "px";
+              } else if (d.target.data && d.target.data.metrics && d.target.data.metrics.hdfsBytesWritten) {
                 var w = d.target.data.metrics.hdfsBytesWritten;
                 return (minWidth + (maxWidth - minWidth) / (self.dataMax - self.dataMin)
                     * (w - self.dataMin)) + "px";
