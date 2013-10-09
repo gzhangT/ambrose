@@ -150,21 +150,21 @@ define(['lib/jquery', 'lib/d3', '../core', './core'], function($, d3, Ambrose, V
 
       function taskProgressMessage(totalTasks, taskProgress, completedTasks) {
         if (totalTasks == null || taskProgress == null) return 'N/A';
-        
+
         if (completedTasks != null && totalTasks != null && taskProgress != null) {
-            return completedTasks + " / " + totalTasks + ' (' + 
+            return completedTasks + " / " + totalTasks + ' (' +
             (Math.round(Number(taskProgress) * 10000, 0)) / 100 + '%)';
         } else {
             return totalTasks + ' (' + (Math.round(Number(taskProgress) * 10000, 0)) / 100 + '%)';
         }
       }
-      
+
       function setJobTime(status, mapperStartTime, mapperEndTime, reducerStartTime, reducerEndTime) {
         if (status && mapperStartTime) {
             if (status == 'RUNNING') {
                 return "Started at: <br>" + formatTimestamp(mapperStartTime);
             } else if (reducerEndTime && mapperStartTime){
-                return "Started at: <br>" + formatTimestamp(mapperStartTime) + "<br>" 
+                return "Started at: <br>" + formatTimestamp(mapperStartTime) + "<br>"
                 + "Ended at: <br>" + formatTimestamp(reducerEndTime) + "<br>"
                 + "Elapsed Time: <br>" + calculateElapsedTime(mapperStartTime, reducerEndTime);
             }
@@ -172,10 +172,10 @@ define(['lib/jquery', 'lib/d3', '../core', './core'], function($, d3, Ambrose, V
             return '---';
         }
       }
-      
+
       function calculateElapsedTime(start, end) {
           var ms = Number(end) - Number(start);
-          
+
           var d, h, m, s;
           var elapsedTime = "";
           s = Math.floor(ms / 1000);
@@ -185,21 +185,21 @@ define(['lib/jquery', 'lib/d3', '../core', './core'], function($, d3, Ambrose, V
           m = m % 60;
           d = Math.floor(h / 24);
           h = h % 24;
-          
+
           if (d != 0 && d != null) elapsedTime += ", " + d + "days";
           if (h != 0 && h != null) elapsedTime += ", " + h + "hours";
           if (m != 0 && m != null) elapsedTime += ", " + m + "mins";
           if (s != 0) elapsedTime += ", " + s + "sec";
-          
+
           return elapsedTime.substring(2);
       };
-      
+
       function pad(number) {
           var r = String(number);
           if (r.length === 1) r = '0' + r;
           return r;
       }
-      
+
       function formatTimestamp(timestamp) {
             var time = Number(timestamp);
             var date = new Date(time);
@@ -231,10 +231,10 @@ define(['lib/jquery', 'lib/d3', '../core', './core'], function($, d3, Ambrose, V
       tr.selectAll('td.job-time').html(function (job) {
           var mrState = job.mapReduceJobState || {};
           return setJobTime(
-                  job.status, 
-                  mrState.mapTaskStartTime, 
-                  mrState.mapTaskEndTime, 
-                  mrState.reduceTaskStartTime, 
+                  job.status,
+                  mrState.mapTaskStartTime,
+                  mrState.mapTaskEndTime,
+                  mrState.reduceTaskStartTime,
                   mrState.reduceTaskEndTime);
         });
       tr.selectAll('td.job-mappers').text(function (job) {
@@ -247,7 +247,7 @@ define(['lib/jquery', 'lib/d3', '../core', './core'], function($, d3, Ambrose, V
        tr.selectAll('td.job-reducers').text(function (job) {
         var mrState = job.mapReduceJobState || {};
         return taskProgressMessage(
-          mrState.totalReducers, 
+          mrState.totalReducers,
           mrState.reduceProgress,
           mrState.finishedReducers);
       });
