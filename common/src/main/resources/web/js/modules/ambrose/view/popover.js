@@ -41,6 +41,93 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
         this.container.addClass('detailpop');
       },
 
+      scatterplot: function(data) {
+          var w = 640,
+            h = 360,
+            padding = 50,
+            dataset = [];
+
+          // Create dataset data
+          for (var i = 0; i < data.length; i++) {
+            dataset.push([i+1, data[i]]);
+          }
+
+          // Create scale functions
+          var xScale = d3.scale.linear()
+                         .domain([0, d3.max(dataset, function(d) { return d[0]; }) ])
+                         .range([padding, w - padding * 2]);
+
+          var yScale = d3.scale.linear()
+                         .domain([0, d3.max(dataset, function(d) { return d[1]; })])
+                         .range([h - padding, padding]);
+
+          // Define X axis
+          var xAxis = d3.svg.axis()
+                        .scale(xScale)
+                        .orient("bottom")
+                        .ticks(data.length);
+
+          // Define Y axis
+          var yAxis = d3.svg.axis()
+                        .scale(yScale)
+                        .orient("left")
+                        .ticks(5);
+
+          // Create SVG element
+          var svg = d3.selectAll("#plot");
+          if (svg.size() != 0) {
+            svg.remove();
+          }
+          svg = d3.select("#test-plot")
+          .append("svg")
+          .attr("id", "plot")
+          .attr("width", w)
+          .attr("height", h);
+
+          //Create circles
+          svg.selectAll("circle")
+             .data(dataset)
+             .enter()
+             .append("circle")
+             .attr("cx", function(d) {
+               return xScale(d[0]);
+             })
+             .attr("cy", function(d) {
+               return yScale(d[1]);
+             })
+             .attr("r", 2.5);
+
+          //Create labels
+          svg.selectAll("text")
+             .data(dataset)
+             .enter()
+             .append("text")
+             .text(function(d) {
+                 return d[0] + "," + d[1];
+             })
+             .attr("x", function(d) {
+                 return xScale(d[0]) + 5;
+             })
+             .attr("y", function(d) {
+                 return yScale(d[1]);
+             })
+             .attr("font-family", "sans-serif")
+             .attr("font-size", "10px")
+             .attr("fill", "blue");
+
+          // Create X axis
+          svg.append("g")
+             .attr("class", "axis")
+             .attr("transform", "translate(0," + (h - padding) + ")")
+             .call(xAxis);
+
+          // Create Y axis
+          svg.append("g")
+             .attr("class", "axis")
+             .attr("transform", "translate(" + padding + ",0)")
+             .call(yAxis);
+      },
+
       setNode: function(data, target, type) {
         self.nodedata = data;
         this.setTarget(target);
@@ -61,6 +148,9 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
       },
 
       updateForNode: function(type) {
+        this.container.empty();
+        var closeButton = this.addCloseButton(this);
+
         var metricsEl = $('<div">');
         var obj = this;
 
@@ -85,6 +175,15 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
               noDataParaEl.append($('<p class="metric">Metrics data not available yet. </p>'));
               metricsEl.append(noDataParaEl);
           }
+
+          if (self.nodedata.mapReduceJobState &&
+              self.nodedata.mapReduceJobState.mapperFinishTimeList) {
+              obj.container.css("width", "640px");
+              var graphEl = $('<div id="test-plot">');
+              obj.container.append(graphEl);
+              obj.scatterplot(self.nodedata.mapReduceJobState.mapperFinishTimeList);
+          }
+
         } else if (type == 'counters') {
            this.container.css("width", "275px");
            var headerEl = $('<div class="metric">');
@@ -109,9 +208,8 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
           }
         }
 
-        this.container.empty();
+        this.positionCloseButton(closeButton, this.container.width());
         this.updatePosition(xcor, ycor);
-        this.addCloseButton(this, this.container.width());
         this.container.append(metricsEl);
       },
 
@@ -127,14 +225,18 @@ define(['lib/jquery', 'lib/underscore', './core'], function($, _, View) {
         this.container.css({top: position.top, left: position.left});
       },
 
-      addCloseButton: function(self, width) {
+      addCloseButton: function(self) {
         var closeEl = $('<div class="closeButton" id="popOverCloseButton">X</div>');
-        closeEl.css("margin-left", (width - 25) + "px");
         this.container.append(closeEl);
 
         document.getElementById('popOverCloseButton').onclick = function() {
           self.hideIfExist();
         }
+        return closeEl;
+      },
+
+      positionCloseButton: function(closeEl, width) {
+        closeEl.css("margin-left", (width - 25) + "px");
       },
 
       getPosition: function(targetEl, winwidth, xcor, ycor) {

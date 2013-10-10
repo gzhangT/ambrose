@@ -395,6 +395,21 @@
         "pig.reduce.output.dirs" : "file:/tmp/temp1512870934/tmp-1771710669",
         "stop.on.failure" : "true"
       },
+      "mapReduceJobState" : {
+        "jobId" : "job_201309090848_143890",
+        "jobName" : "PigLatin:gzhangqueries:daily_2013/09/03_to_2013/09/04",
+        "trackingURL" : "http://hadoop-dw-jt.smf1.twitter.com:50030/jobdetails.jsp?jobid=job_201309090848_143890",
+        "mapProgress" : 1.0,
+        "reduceProgress" : 1.0,
+        "totalMappers" : 16,
+        "totalReducers" : 17,
+        "lastMapTaskEndTime" : 1379467224918,
+        "lastReduceTaskEndTime" : 1379467518349,
+        "mapperFinishTimeList" : [2100, 2112, 2130, 2128, 2105, 2118, 2103, 2211, 2160],
+        "reducerFinishTimeList" : [100, 128, 109],
+        "successful" : true,
+        "complete" : true
+      },
       "metrics" : {
         "proactiveSpillCountObjects" : 0,
         "avgMapTime" : 683413,

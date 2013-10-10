@@ -241,9 +241,9 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
     Map<Event.WorkflowProgressField, String> eventData = Maps.newHashMap();
     eventData.put(Event.WorkflowProgressField.workflowProgress, Integer.toString(progress));
     pushEvent(scriptId, new Event.WorkflowProgressEvent(eventData));
-    
+
     LOG.info("pushed event , progress={}", progress);
-    
+
     // then for each running job, we report the job progress
     for (DAGNode<PigJob> node : dagNodeNameMap.values()) {
       // don't send progress events for unstarted jobs
@@ -316,7 +316,7 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
   @SuppressWarnings("deprecation")
   private void addMapReduceJobState(PigJob pigJob) {
     JobClient jobClient = PigStats.get().getJobClient();
-    
+
     try {
       RunningJob runningJob = jobClient.getJob(pigJob.getId());
       if (runningJob == null) {
@@ -328,14 +328,14 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
       TaskReport[] mapTaskReport = jobClient.getMapTaskReports(jobID);
       TaskReport[] reduceTaskReport = jobClient.getReduceTaskReports(jobID);
       pigJob.setMapReduceJobState(new MapReduceJobState(runningJob, mapTaskReport, reduceTaskReport));
-      
+
       Properties jobConfProperties = new Properties();
       Configuration conf = jobClient.getConf();
       for (Map.Entry<String, String> entry : conf) {
           jobConfProperties.setProperty(entry.getKey(), entry.getValue());
       }
       pigJob.setConfiguration(jobConfProperties);
-      
+
     } catch (IOException e) {
       log.error("Error getting job info.", e);
     }
